@@ -76,25 +76,40 @@
 
                 {% else %}
 
-                <a href="/login">
-                    Login
-                </a>
+                <div class="dropdown">
 
-                <a href="/register">
-                    Register
-                </a>
+                    <button
+                        class="dropbtn">
 
-                <a href="/recycle-bin">
-                    🗑 Recycle Bin
-                </a>
+                        Menu
 
-                <button
-                    id="darkModeBtn"
-                    class="dark-mode-btn">
+                    </button>
 
-                🌙
+                    <div class="dropdown-content">
 
-                </button>
+                        <a href="/login">
+                            Login
+                        </a>
+
+                        <a href="/register">
+                            Register
+                        </a>
+
+                        <a href="/recycle-bin">
+                            🗑 Recycle Bin
+                        </a>
+
+                        <a
+                            href="#"
+                            id="darkModeBtn">
+
+                            🌙 Dark Mode
+
+                        </a>
+
+                    </div>
+
+                </div>
 
                 {% endif %}
 

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>
+        AWS File Sharing Platform
+    </title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="hero">
+
+        <div class="top-navbar">
+
+            <div class="logo">
+
+                AWS File Sharing Platform
+
+            </div>
+
+            <div class="menu">
+
+                {% if user_name %}
+
+                <div class="dropdown">
+
+                    <button
+                        class="dropbtn">
+
+                        👤 {{ user_name }} ▼
+
+                    </button>
+
+                    <div class="dropdown-content">
+
+                        <a href="/">
+                            Home
+                        </a>
+
+                        <a href="/my-files">
+                            Private Files
+                        </a>
+
+                        <a href="/shared-files">
+                            Shared Files
+                        </a>
+
+                        <a href="/recycle-bin">
+                            🗑 Recycle Bin
+                        </a>
+
+                        <a
+                            href="#"
+                            id="darkModeBtn">
+
+                            🌙 Dark Mode
+
+                        </a>
+
+                        <a href="/logout">
+                            🚪 Logout
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% else %}
+
+                <a href="/login">
+                    Login
+                </a>
+
+                <a href="/register">
+                    Register
+                </a>
+
+                <a href="/recycle-bin">
+                    🗑 Recycle Bin
+                </a>
+
+                <button
+                    id="darkModeBtn"
+                    class="dark-mode-btn">
+
+                🌙
+
+                </button>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <p>
+            Public Cloud Storage & Private File Sharing &
+            Upload, Share and Manage Files Securely
+        </p>
+
+    </div>
+
+    <div class="upload-card">
+
+        <div id="dropZone">
+
+            <h3>
+                📁 Drag & Drop Files Here
+            </h3>
+
+            <p>
+                or choose a file below
+            </p>
+
+            <form
+                action="/upload"
+                method="post"
+                enctype="multipart/form-data">
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    name="file"
+                    required>
+                
+                <br><br>
+
+                    <label>
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="public"
+                            checked>
+
+                            Public File
+                    </label>
+
+                    <label style="margin-left:20px;">
+
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="private">
+
+                            Private File
+
+                    </label>
+
+                <br><br>
+
+                <button type="submit">
+                    Upload File
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    {% if success %}
+
+    <div class="success-message">
+        ✅ {{ success }} uploaded successfully.
+    </div>
+
+    {% endif %}
+
+    {% if error %}
+
+    <div class="error-message">
+        ❌ {{ error }} already exists.
+    </div>
+
+    {% endif %}
+
+    {% if deleted %}
+
+    <div class="delete-message">
+        🗑️ File moved to Recycle Bin successfully.
+    </div>
+
+    {% endif %}
+
+    <div
+        id="shareModal"
+        class="modal">
+
+        <div class="modal-content">
+
+            <h2>
+                Share Selected Files
+            </h2>
+
+            <form
+                action="/share-files"
+                method="post">
+
+                <input
+                    type="hidden"
+                    id="selectedFileIds"
+                    name="file_ids">
+
+                <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter User Email"
+                    required>
+
+                <br><br>
+
+                <button type="submit">
+
+                    Share Files
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <div class="search-box">
+
+        <form method="get" class="search-form">
+
+            <input
+                type="text"
+                name="search"
+                class="search-input"
+                placeholder="🔍 Search files..."
+                value="{{ search }}">
+
+            <button type="submit">
+                Search
+            </button>
+
+            {% if search %}
+            <a href="/" class="cancel-btn">
+                Clear
+            </a>
+            {% endif %}
+
+        </form>
+
+    </div>
+
+    <h2 class="section-title">
+        Uploaded Files
+    </h2>
+
+    {% for file in files %}
+
+    <div class="file-card">
+
+        <div class="file-info">
+
+            <input
+                type="checkbox"
+                class="file-checkbox hidden-checkbox"
+                value="{{ file[0] }}"
+                data-filename="{{ file[1] }}">
+
+            {% if file[4] %}
+
+            <span class="public-badge">
+                🌍 Public
+            </span>
+
+            {% else %}
+
+            <span class="private-badge">
+                🔒 Private
+            </span>
+
+            {% endif %}
+
+            <h3>
+
+                {% if file[1].endswith('.jpg') or file[1].endswith('.jpeg') or file[1].endswith('.png') %}
+                    🖼️
+                {% elif file[1].endswith('.pdf') %}
+                    📕
+                {% elif file[1].endswith('.xlsx') or file[1].endswith('.xls') %}
+                    📊
+                {% elif file[1].endswith('.zip') %}
+                    📦
+                {% elif file[1].endswith('.docx') %}
+                    📄
+                {% else %}
+                    📁
+                {% endif %}
+
+                {{ file[1] }}
+
+            </h3>
+
+            <p>
+
+                Size:
+
+                {{ (file[2] / 1024)|round(2) }}
+
+                KB
+
+            </p>
+
+            <p>
+
+                Uploaded:
+
+                {{ file[3] }}
+
+            </p>
+
+        </div>
+
+        <div class="actions">
+
+            <a
+                href="/preview/{{ file[0] }}?from=home"
+                class="preview-btn">
+
+                👁 Preview
+
+            </a>
+
+            <a
+                href="/download/{{ file[0] }}"
+                class="download-btn">
+
+                Download
+
+            </a>
+
+            <button
+                type="button"
+                class="delete-btn"
+                onclick="openDeleteModal('{{ file[0] }}','{{ file[1] }}')">
+
+                Delete
+
+            </button>
+
+            <button
+                class="share-btn"
+                onclick="generateShareLink('{{ file[0] }}')">
+
+                🔗 Share
+
+            </button>
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+<!-- Delete Modal -->
+
+<div
+    id="deleteModal"
+    class="modal">
+
+    <div class="modal-content">
+
+        <h2>
+            Delete File
+        </h2>
+
+        <p id="deleteMessage">
+        </p>
+
+        <div class="modal-buttons">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeModal()">
+
+                Cancel
+
+            </button>
+
+            <a
+                id="confirmDeleteBtn"
+                href="#"
+                class="confirm-delete-btn">
+
+                Delete
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Bulk Delete Modal -->
+
+<div
+    id="bulkDeleteModal"
+    class="modal">
+
+    <div class="modal-content">
+
+        <h2>
+            Delete Selected Files
+        </h2>
+
+        <p id="bulkDeleteMessage">
+        </p>
+
+        <div class="modal-buttons">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeBulkModal()">
+
+                Cancel
+
+            </button>
+
+            <button
+                type="button"
+                class="confirm-delete-btn"
+                onclick="deleteSelectedFiles()">
+
+                Delete
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="shareLinkModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>🔗 Share File</h2>
+
+        <input
+            type="text"
+            id="shareLinkInput"
+            readonly
+            class="share-link-input">
+
+        <br><br>
+
+        <div class="share-buttons">
+
+            <button
+                onclick="copyShareLink()"
+                class="copy-btn">
+
+                📋 Copy Link
+
+            </button>
+
+            <a
+                id="whatsappShare"
+                target="_blank"
+                class="whatsapp-btn">
+
+                💬 WhatsApp
+
+            </a>
+
+            <a
+                id="emailShare"
+                class="email-btn">
+
+                📧 Email
+
+            </a>
+
+        </div>
+
+        <br>
+
+        <button
+            onclick="closeShareModal()"
+            class="cancel-btn">
+
+            ❌ Close
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+
+</html>

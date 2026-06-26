@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Private Files</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>📁 Private Files</h1>
+
+<div class="page-header">
+
+    <a href="/" class="home-btn">🏠 Home</a>
+
+    <a href="/my-files" class="home-btn">
+        🔒 Private Files
+    </a>
+
+    <a href="/shared-files" class="home-btn">
+        🤝 Shared Files
+    </a>
+
+    <a href="/recycle-bin" class="recycle-btn">
+    🗑 Recycle Bin
+    </a>
+
+</div>
+
+{% if deleted %}
+
+<div class="delete-message">
+    🗑️ File moved to Recycle Bin successfully.
+</div>
+
+{% endif %}
+
+    {% if files %}
+
+        {% for file in files %}
+
+        <div class="file-card">
+
+            <div>
+
+                <h3>{{ file[1] }}</h3>
+
+                <p>Size: {{ (file[2] / 1024)|round(2) }} KB</p>
+
+                <p>Uploaded: {{ file[3] }}</p>
+
+            </div>
+
+            <div class="actions">
+
+                <a
+                    href="/preview/{{ file[0] }}?from=my_files"
+                    class="preview-btn">
+
+                    👁 Preview
+
+                </a>
+
+                <a
+                    href="/download/{{ file[0] }}"
+                    class="download-btn">
+
+                    Download
+
+                </a>
+
+                <button
+                    type="button"
+                    class="delete-btn"
+                    onclick="openDeleteModal('{{ file[0] }}','{{ file[1] }}','my-files')">
+
+                    Delete
+
+                </button>
+
+                <button
+                    type="button"
+                    class="share-btn"
+                    onclick="generateShareLink('{{ file[0] }}')">
+
+                    🔗 Share
+
+                </button>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <h3>No files found.</h3>
+
+    {% endif %}
+
+</div>
+
+<div id="shareLinkModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>🔗 Share File</h2>
+
+        <input
+            type="text"
+            id="shareLinkInput"
+            readonly
+            class="share-link-input">
+
+        <br><br>
+
+        <div class="share-buttons">
+
+            <button
+                onclick="copyShareLink()"
+                class="copy-btn">
+
+                📋 Copy Link
+
+            </button>
+
+            <a
+                id="whatsappShare"
+                target="_blank"
+                class="whatsapp-btn">
+
+                💬 WhatsApp
+
+            </a>
+
+            <a
+                id="emailShare"
+                class="email-btn">
+
+                📧 Email
+
+            </a>
+
+        </div>
+
+        <br>
+
+        <button
+            onclick="closeShareModal()"
+            class="cancel-btn">
+
+            ❌ Close
+
+        </button>
+
+    </div>
+
+</div>
+
+<!-- Delete Modal -->
+
+<div id="deleteModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Delete File</h2>
+
+        <p id="deleteMessage"></p>
+
+        <div class="modal-buttons">
+
+            <button
+                type="button"
+                class="cancel-btn"
+                onclick="closeModal()">
+
+                Cancel
+
+            </button>
+
+            <a
+                id="confirmDeleteBtn"
+                href="#"
+                class="confirm-delete-btn">
+
+                Delete
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

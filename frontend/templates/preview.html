@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>{{ file.filename }}</title>
+
+    <link rel="stylesheet" href="/static/style.css">
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="top-navbar">
+
+        <div class="logo">
+            AWS File Sharing Platform
+        </div>
+
+        <div class="menu">
+
+            {% if from_page == "my-files" %}
+
+            <a href="/my-files" class="home-btn">
+                ⬅ Back to Private Files
+            </a>
+
+            {% elif from_page == "shared-files" %}
+
+            <a href="/shared-files" class="home-btn">
+                ⬅ Back to Shared Files
+            </a>
+
+            {% else %}
+
+            <button
+                type="button"
+                class="home-btn"
+                onclick="history.back()">
+
+                ⬅ Back
+
+            </button>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+    <div class="upload-card">
+
+        <h2>{{ file.filename }}</h2>
+
+        <hr>
+
+        <div class="preview-area">
+
+            {% if file.filename.endswith('.jpg') or
+                  file.filename.endswith('.jpeg') or
+                  file.filename.endswith('.png') %}
+
+                <img
+                    src="/download/{{ file.id }}"
+                    class="preview-image">
+
+            {% elif file.filename.endswith('.pdf') %}
+
+                <iframe
+                    src="/download/{{ file.id }}"
+                    class="preview-frame">
+                </iframe>
+
+            {% elif file.filename.endswith('.mp4') %}
+
+                <video
+                    controls
+                    class="preview-video">
+
+                    <source
+                        src="/download/{{ file.id }}">
+
+                </video>
+
+            {% elif file.filename.endswith('.mp3') %}
+
+                <audio controls>
+
+                    <source
+                        src="/download/{{ file.id }}">
+
+                </audio>
+
+            {% else %}
+
+                <h1>📁</h1>
+
+                <h3>
+                    Preview not available
+                </h3>
+
+            {% endif %}
+
+        </div>
+
+        <hr>
+
+        <div class="file-details">
+
+            <p><b>Name :</b> {{ file.filename }}</p>
+
+            <p><b>Size :</b> {{ (file.file_size/1024)|round(2) }} KB</p>
+
+            <p><b>Uploaded :</b> {{ file.upload_date }}</p>
+
+            <p>
+
+                <b>Visibility :</b>
+
+                {% if file.is_public %}
+
+                    🌍 Public
+
+                {% else %}
+
+                    🔒 Private
+
+                {% endif %}
+
+            </p>
+
+        </div>
+
+        <br>
+
+        <div class="actions">
+
+            <a
+                href="/download/{{ file.id }}"
+                class="download-btn">
+
+                ⬇ Download
+
+            </a>
+
+            <button
+                class="share-btn"
+                onclick="generateShareLink('{{ file.id }}')">
+
+                🔗 Share
+
+            </button>
+
+            <a
+                href="/delete/{{ file.id }}"
+                class="delete-btn">
+
+                🗑 Delete
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div id="shareLinkModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>Share File</h2>
+
+        <input
+            id="shareLinkInput"
+            class="share-link-input"
+            readonly>
+
+        <br><br>
+
+        <div class="share-buttons">
+
+            <button
+                onclick="copyShareLink()"
+                class="copy-btn">
+
+                Copy Link
+
+            </button>
+
+            <a
+                id="whatsappShare"
+                class="whatsapp-btn"
+                target="_blank">
+
+                WhatsApp
+
+            </a>
+
+            <a
+                id="emailShare"
+                class="email-btn">
+
+                Email
+
+            </a>
+
+        </div>
+
+        <br>
+
+        <button
+            onclick="closeShareModal()"
+            class="cancel-btn">
+
+            Close
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+
+</html>

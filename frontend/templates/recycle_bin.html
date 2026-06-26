@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🗑 Recycle Bin</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h1>🗑 Recycle Bin</h1>
+
+<div class="page-header">
+
+    <a href="/" class="home-btn">🏠 Home</a>
+
+    <a href="/my-files" class="home-btn">
+        🔒 Private Files
+    </a>
+
+    <a href="/shared-files" class="home-btn">
+        🤝 Shared Files
+    </a>
+
+</div>
+
+{% if restored %}
+
+<div class="success-message">
+    ✅ File restored successfully.
+</div>
+
+{% endif %}
+
+{% if permanent %}
+
+<div class="delete-message">
+    🗑 File permanently deleted.
+</div>
+
+{% endif %}
+
+    {% if files %}
+
+        {% for file in files %}
+
+        <div class="file-card">
+
+            <div>
+
+                <h3>{{ file[1] }}</h3>
+
+                <p>Size: {{ (file[2] / 1024)|round(2) }} KB</p>
+
+                <p>Uploaded: {{ file[3] }}</p>
+
+            </div>
+
+            <div class="actions">
+
+                <a
+                    href="/restore/{{ file[0] }}"
+                    class="download-btn">
+
+                    ♻ Restore
+
+                </a>
+
+                <a
+                    href="/delete-permanently/{{ file[0] }}"
+                    class="delete-btn">
+
+                    ❌ Delete Permanently
+
+                </a>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <h3>No files found.</h3>
+
+    {% endif %}
+
+</div>
+
+<div id="shareLinkModal" class="modal">
+
+    <div class="modal-content">
+
+        <h2>🔗 Share File</h2>
+
+        <input
+            type="text"
+            id="shareLinkInput"
+            readonly
+            class="share-link-input">
+
+        <br><br>
+
+        <div class="share-buttons">
+
+            <button
+                onclick="copyShareLink()"
+                class="copy-btn">
+
+                📋 Copy Link
+
+            </button>
+
+            <a
+                id="whatsappShare"
+                target="_blank"
+                class="whatsapp-btn">
+
+                💬 WhatsApp
+
+            </a>
+
+            <a
+                id="emailShare"
+                class="email-btn">
+
+                📧 Email
+
+            </a>
+
+        </div>
+
+        <br>
+
+        <button
+            onclick="closeShareModal()"
+            class="cancel-btn">
+
+            ❌ Close
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="/static/script.js"></script>
+
+</body>
+</html>

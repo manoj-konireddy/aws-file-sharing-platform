@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual Environment
+venv/
+.env
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# Database
+*.db
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# Uploads
+uploads/
+
+# Python cache
+.pytest_cache/
+
+# Build
+dist/
+build/

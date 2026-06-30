@@ -6,9 +6,7 @@ A secure cloud-based file sharing application built with **FastAPI** and deploye
 
 <p align="center">
 
-[![Live Demo](https://img.shields.io/badge/🌐_Live_Demo-Visit_Website-blue?style=for-the-badge)](https://dz2uxbjrzh7nu.cloudfront.net)
-
-[![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/manoj-konireddy/aws-file-sharing-platform)
+[![Live Demo]](https://dz2uxbjrzh7nu.cloudfront.net)
 
 </p>
 
@@ -20,7 +18,6 @@ A secure cloud-based file sharing application built with **FastAPI** and deploye
     <img src="images/dashboard-page.png" width="900">
 </p>
 
-> **Note:** Replace `images/dashboard.png` with a screenshot of your application's dashboard. Create an `images` folder in your repository and add the screenshot there.
 
 ---
 

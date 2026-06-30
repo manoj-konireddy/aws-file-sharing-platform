@@ -213,7 +213,7 @@ async def upload_file(
     s3.upload_fileobj(
         file.file,
         S3_BUCKET,
-        file.filename
+        s3_key
     )
 
     cursor.execute(
@@ -237,7 +237,7 @@ async def upload_file(
         """,
         (
             file.filename,
-            file.filename,
+            s3_key,
             file_size,
             user_id,
             is_public

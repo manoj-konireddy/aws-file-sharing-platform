@@ -24,12 +24,18 @@ from password_utils import (
 import uuid
 import shutil
 import os
+import boto3
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 UPLOAD_FOLDER = os.path.join(BASE_DIR, "uploads")
-
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+S3_BUCKET = "manoj-file-sharing-platform"
+
+s3 = boto3.client(
+    "s3",
+    region_name="ap-south-1"
+)
 
 app = FastAPI()
 
@@ -202,13 +208,15 @@ async def upload_file(
             status_code=303
         )
 
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(
-            file.file,
-            buffer
-        )
+    s3.upload_fileobj(
+        file.file,
+        S3_BUCKET,
+        file.filename
+    )
 
-    file_size = os.path.getsize(file_path)
+    file.file.seek(0, 2)
+    file_size = file.file.tell()
+    file.file.seek(0)
 
     cursor.execute(
         """
@@ -231,7 +239,7 @@ async def upload_file(
         """,
         (
             file.filename,
-            file_path,
+            file.filename,
             file_size,
             user_id,
             is_public

@@ -317,9 +317,6 @@ def delete_file(
     if from_page == "my-files":
         url = "/my-files?deleted=1"
 
-    elif from_page == "shared-files":
-        url = "/shared-files?deleted=1"
-
     else:
         url = "/?deleted=1"
 
@@ -473,66 +470,6 @@ def logout(
         status_code=303
     )
 
-@app.post("/share-file")
-def share_file(
-
-    file_id: int = Form(...),
-
-    email: str = Form(...)
-
-):
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        SELECT id
-        FROM users
-        WHERE email = %s
-        """,
-        (email,)
-    )
-
-    user = cursor.fetchone()
-
-    if not user:
-
-        cursor.close()
-        conn.close()
-
-        return {
-            "message": "User not found"
-        }
-
-    cursor.execute(
-        """
-        INSERT INTO file_shares
-        (
-            file_id,
-            shared_with_user_id
-        )
-        VALUES
-        (
-            %s,
-            %s
-        )
-        """,
-        (
-            file_id,
-            user[0]
-        )
-    )
-
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-
-    return {
-        "message": "File shared successfully"
-    }
-
 @app.get("/my-files")
 def my_files(
     request: Request
@@ -587,62 +524,6 @@ def my_files(
         }
     )
 
-@app.get("/shared-files")
-def shared_files(
-    request: Request
-):
-
-    user_id = request.session.get(
-        "user_id"
-    )
-
-    if not user_id:
-
-        return RedirectResponse(
-            "/login",
-            status_code=303
-        )
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        SELECT
-            f.id,
-            f.filename,
-            f.file_size,
-            f.upload_date,
-            f.is_public
-
-        FROM files f
-
-        JOIN file_shares fs
-        ON f.id = fs.file_id
-
-        WHERE
-            fs.shared_with_user_id = %s
-            AND f.is_deleted = FALSE
-        """,
-        (user_id,)
-    )
-
-    files = cursor.fetchall()
-
-    cursor.close()
-    conn.close()
-
-    return templates.TemplateResponse(
-        request=request,
-        name="shared_files.html",
-        context={
-            "files": files,
-            "user_name":
-            request.session.get(
-                "user_name"
-            )
-        }
-    )
 
 @app.get("/recycle-bin")
 def recycle_bin(
@@ -686,87 +567,6 @@ def recycle_bin(
             "permanent": permanent,
             "deleted": request.query_params.get("deleted")
         }
-    )
-
-@app.post("/share-files")
-def share_files(
-
-    request: Request,
-
-    file_ids: str = Form(...),
-
-    email: str = Form(...)
-
-):
-
-    user_id = request.session.get(
-        "user_id"
-    )
-
-    if not user_id:
-
-        return RedirectResponse(
-            "/login",
-            status_code=303
-        )
-
-    conn = get_connection()
-    cursor = conn.cursor()
-
-    cursor.execute(
-        """
-        SELECT id
-        FROM users
-        WHERE email = %s
-        """,
-        (email,)
-    )
-
-    target_user = cursor.fetchone()
-
-    if not target_user:
-
-        cursor.close()
-        conn.close()
-
-        return RedirectResponse(
-            "/?error=User Not Found",
-            status_code=303
-        )
-
-    target_user_id = target_user[0]
-
-    ids = file_ids.split(",")
-
-    for file_id in ids:
-
-        cursor.execute(
-            """
-            INSERT INTO file_shares
-            (
-                file_id,
-                shared_with_user_id
-            )
-            VALUES
-            (
-                %s,
-                %s
-            )
-            """,
-            (
-                file_id,
-                target_user_id
-            )
-        )
-
-    conn.commit()
-
-    cursor.close()
-    conn.close()
-
-    return RedirectResponse(
-        "/?success=Files Shared",
-        status_code=303
     )
 
 @app.get("/generate-share-link/{file_id}")

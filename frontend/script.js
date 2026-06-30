@@ -561,8 +561,7 @@ window.addEventListener("beforeunload", function () {
 // Save scroll position only on list pages
 if (
     window.location.pathname === "/" ||
-    window.location.pathname === "/my-files" ||
-    window.location.pathname === "/shared-files"
+    window.location.pathname === "/my-files"
 ) {
 
     window.addEventListener("beforeunload", function () {

@@ -215,7 +215,10 @@ async def upload_file(
     s3.upload_fileobj(
         file.file,
         S3_BUCKET,
-        s3_key
+        s3_key,
+        ExtraArgs={
+            "ContentType": file.content_type
+        }
     )
 
     cursor.execute(

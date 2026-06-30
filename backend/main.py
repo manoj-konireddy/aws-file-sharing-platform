@@ -33,6 +33,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 S3_BUCKET = "manoj-file-sharing-platform"
 
+CLOUDFRONT_URL = "https://dmy3tuz6xjjcd.cloudfront.net"
+
 s3 = boto3.client(
     "s3",
     region_name="ap-south-1"
@@ -279,17 +281,11 @@ def download_file(file_id: int):
             "error": "File not found"
         }
 
-    temp_file = tempfile.NamedTemporaryFile(delete=False)
+    cloudfront_url = f"{CLOUDFRONT_URL}/{file[1]}"
 
-    s3.download_file(
-        S3_BUCKET,
-        file[1],
-        temp_file.name
-    )
-
-    return FileResponse(
-        path=temp_file.name,
-        filename=file[0]
+    return RedirectResponse(
+        url=cloudfront_url,
+        status_code=302
     )
 
 @app.get("/delete/{file_id}")

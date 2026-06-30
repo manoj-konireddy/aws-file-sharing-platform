@@ -329,5 +329,3 @@ https://d3mwy50w6wapyd.cloudfront.net/
 # ⭐ If you like this project
 
 If you found this project useful, please consider giving it a ⭐ on GitHub.
-
----

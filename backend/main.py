@@ -23,6 +23,7 @@ from password_utils import (
 
 import uuid
 import shutil
+import tempfile
 import os
 import boto3
 
@@ -161,11 +162,6 @@ async def upload_file(
     visibility: str = Form("public")
 ):
 
-    file_path = os.path.join(
-        UPLOAD_FOLDER,
-        file.filename
-    )
-
     conn = get_connection()
     cursor = conn.cursor()
 
@@ -208,15 +204,17 @@ async def upload_file(
             status_code=303
         )
 
+    file.file.seek(0, 2)
+    file_size = file.file.tell()
+    file.file.seek(0)
+
+    s3_key = f"{uuid.uuid4()}_{file.filename}"
+
     s3.upload_fileobj(
         file.file,
         S3_BUCKET,
         file.filename
     )
-
-    file.file.seek(0, 2)
-    file_size = file.file.tell()
-    file.file.seek(0)
 
     cursor.execute(
         """
@@ -281,8 +279,16 @@ def download_file(file_id: int):
             "error": "File not found"
         }
 
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+
+    s3.download_file(
+        S3_BUCKET,
+        file[1],
+        temp_file.name
+    )
+
     return FileResponse(
-        path=file[1],
+        path=temp_file.name,
         filename=file[0]
     )
 
@@ -795,7 +801,7 @@ def generate_share_link(
 
     return {
         "share_link":
-        f"http://localhost:8000/shared/{token}"
+        f"/shared/{token}"
     }
 
 @app.get("/shared/{token}")
@@ -829,8 +835,16 @@ def shared_file(
             "Invalid Share Link"
         }
 
+    temp_file = tempfile.NamedTemporaryFile(delete=False)
+
+    s3.download_file(
+        S3_BUCKET,
+        file[1],
+        temp_file.name
+    )
+
     return FileResponse(
-        path=file[1],
+        path=temp_file.name,
         filename=file[0]
     )
 

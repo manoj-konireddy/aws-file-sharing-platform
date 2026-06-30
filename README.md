@@ -4,14 +4,6 @@ A secure cloud-based file sharing application built with **FastAPI** and deploye
 
 ---
 
-<p align="center">
-
-[![Live Demo]](https://dz2uxbjrzh7nu.cloudfront.net)
-
-</p>
-
----
-
 ## 📸 Dashboard
 
 <p align="center">

@@ -331,7 +331,3 @@ https://d3mwy50w6wapyd.cloudfront.net/
 If you found this project useful, please consider giving it a ⭐ on GitHub.
 
 ---
-
-# 📄 License
-
-This project is created for educational and portfolio purposes.

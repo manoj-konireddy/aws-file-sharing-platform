@@ -314,7 +314,7 @@ LinkedIn:
 https://www.linkedin.com/in/manoj-konireddy
 
 Portfolio:
-https://d3mwy50w6wapyd.cloudfront.net/
+https://manoj-konireddy.github.io/portfolio/
 
 ---
 
